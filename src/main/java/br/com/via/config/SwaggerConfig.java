@@ -33,29 +33,18 @@ public class SwaggerConfig {
 	@SuppressWarnings("deprecation")
 	@Bean
 	public Docket api() {
-		return new Docket(DocumentationType.SWAGGER_2)
-				.apiInfo(getApiInfo())
-				.select()
-				.apis(RequestHandlerSelectors.basePackage(API_BASE_PACKAGE))
-				.paths(PathSelectors.any())
-				.build()
- 				.useDefaultResponseMessages(false)
-				.globalResponseMessage(RequestMethod.GET, responseMessageForGET());
+		return new Docket(DocumentationType.SWAGGER_2).apiInfo(getApiInfo()).select()
+				.apis(RequestHandlerSelectors.basePackage(API_BASE_PACKAGE)).paths(PathSelectors.any()).build()
+				.useDefaultResponseMessages(false).globalResponseMessage(RequestMethod.GET, responseMessageForGET());
 	}
 
 	@SuppressWarnings({ "deprecation", "serial" })
 	private List<ResponseMessage> responseMessageForGET() {
 		return new ArrayList<ResponseMessage>() {
 			{
-				add(new ResponseMessageBuilder()
-					.code(500)
-					.message("500 message")
-					.responseModel(new ModelRef("Error"))
-					.build());
-				add(new ResponseMessageBuilder()
-					.code(403)
-					.message("Forbidden!")
-					.build());
+				add(new ResponseMessageBuilder().code(500).message("500 message").responseModel(new ModelRef("Error"))
+						.build());
+				add(new ResponseMessageBuilder().code(403).message("Forbidden!").build());
 			}
 		};
 	}

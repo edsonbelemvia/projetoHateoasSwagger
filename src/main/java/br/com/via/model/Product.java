@@ -2,34 +2,36 @@ package br.com.via.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.springframework.hateoas.Link;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import br.com.via.viewmodel.ProductModel;
 import io.swagger.annotations.ApiModelProperty;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "product")
-public class Product  implements Serializable {
- 
+public class Product implements Serializable {
+
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@ApiModelProperty(name = "id", notes = "id", value = "10", position = 1)
 	@JsonProperty(value = "id")
 	@Column(name = "id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
 	@ApiModelProperty(name = "name", notes = "name", value = "book one", position = 2)
@@ -38,7 +40,7 @@ public class Product  implements Serializable {
 	private String name;
 
 	@ApiModelProperty(name = "description", notes = "description", value = "description book", position = 3)
-	@Column(name="description", length = 250)
+	@Column(name = "description", length = 250)
 	private String description;
 
 	@ApiModelProperty(name = "price", notes = "price", value = "100.50", position = 4)
@@ -52,32 +54,27 @@ public class Product  implements Serializable {
 
 	@ApiModelProperty(notes = "inventory", example = "100", required = true, position = 6)
 	@JsonProperty("inventory")
-	@Column(name="inventory")
+	@Column(name = "inventory")
 	private Integer inventory;
 
 	@ApiModelProperty(notes = "registerDate", example = "2023-01-24T12:10:00", required = false, position = 7)
 	@JsonProperty("register_date")
-	@Column(name="register_date")
+	@Column(name = "register_date")
 	private LocalDateTime registerDate;
 
-	 @JsonProperty("productId")
-	 private Integer productId;
-	 
-
- 
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = "link_id")
+	private List<Link> links = new ArrayList<Link>();
 
 	public Product() {
- 
+
 	}
 
 	public void init() {
 		registerDate = LocalDateTime.now();
 	}
-	
-	
 
 	public Product(Integer id, String name, String description, Double price, String imageUrl, Integer inventory) {
-		super();
 		this.id = id;
 		this.name = name;
 		this.description = description;
@@ -87,16 +84,11 @@ public class Product  implements Serializable {
 		this.init();
 	}
 
-
-
-
 	@Override
 	public String toString() {
 		return "Product [id=" + id + ", name=" + name + ", description=" + description + ", price=" + price
 				+ ", imageUrl=" + imageUrl + ", inventory=" + inventory + ", registerDate=" + registerDate + "]";
 	}
-
- 
 
 	public String getName() {
 		return name;
@@ -151,16 +143,12 @@ public class Product  implements Serializable {
 		this.registerDate = registerDate;
 	}
 
- 
-	
-	
-
-	public Integer getProductId() {
-		return productId;
+	public void addLink(Link link) {
+		getLinks().add(link);
 	}
 
-	public void setProductId(Integer productId) {
-		this.productId = productId;
+	public void addAllLink(List<Link> links) {
+		getLinks().addAll(links);
 	}
 
 	public Integer getId() {
@@ -220,7 +208,6 @@ public class Product  implements Serializable {
 		return true;
 	}
 
-	 
 	@JsonIgnore
 	public Boolean isValidatePrice() {
 		if (this.price > 0.) {
@@ -228,20 +215,13 @@ public class Product  implements Serializable {
 		}
 		return false;
 	}
-	
-	@JsonIgnore
-	public ProductModel toProductModel(Product product) {
-		ProductModel model = new ProductModel();
-		model.setId(product.getId());
-		model.setName(product.getName());
-		model.setInventory(product.getInventory());
-		model.setPrice(product.getPrice());
-		model.setRegisterDate(LocalDateTime.now());
-		model.setImageUrl(product.getImageUrl());
-		model.setProductId(product.getId());
-		model.add(Link.of("https://localhost:5000/api/product"));
-		return model;
+
+	public List<Link> getLinks() {
+		return links;
 	}
- 
-	
+
+	public void setLinks(List<Link> links) {
+		this.links = links;
+	}
+
 }

@@ -11,19 +11,17 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 public class JsonDateTimeSerializer extends JsonSerializer<LocalDateTime> {
 
 	static String padrao = "yyyy-MM-dd HH:mm:ss";
-	public static DateTimeFormatter DATE_FORMATTER  = DateTimeFormatter.ofPattern(padrao);
+	public static DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(padrao);
 
 	@Override
-	public void serialize(LocalDateTime value, JsonGenerator gen, SerializerProvider serializers) 
-			throws IOException {
+	public void serialize(LocalDateTime value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
 		try {
-		String formattedDate = DATE_FORMATTER.format(value);
-		gen.writeString(formattedDate);
-		}catch(Exception ex) {
-		    System.err.println(ex);
-	        gen.writeString("");
+			String formattedDate = DATE_FORMATTER.format(value);
+			gen.writeString(formattedDate);
+		} catch (Exception ex) {
+			System.err.println(ex);
+			gen.writeString("");
 		}
 	}
-	
-	
+
 }
